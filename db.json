@@ -1,0 +1,39 @@
+{
+  "signup": [
+    {
+      "id": "fe72",
+      "name": "shivendra Brar",
+      "email": "singhshivendra437@gmail.com",
+      "password": "Shivendra@12"
+    },
+    {
+      "id": "b1af",
+      "name": "abc",
+      "email": "a@gmail.com",
+      "password": "S@12"
+    }
+  ],
+
+  "product":[
+ {
+  "name": "Beauty",
+  "img":"p1.png"
+ },
+ {
+  "name": "Fashion",
+  "img":"p2.png"
+ },
+ {
+  "name": "Kids",
+  "img":"p3.png"
+ },
+ {
+  "name": "Mens",
+  "img":"p4.png"
+ },
+ {
+  "name": "Womens",
+  "img":"p5.png"
+ }
+  ]
+}
