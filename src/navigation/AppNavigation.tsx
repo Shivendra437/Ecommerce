@@ -13,20 +13,20 @@ import { colors } from '../theme/colors';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const CustomTabButton = ({ children, onPress }:any) => (
+const CustomTabButton = ({ children, onPress }: any) => (
   <TouchableOpacity
     style={{
-      bottom: 20, 
+      bottom: 20,
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "white",
-      borderRadius:50,
+      borderRadius: 50,
       shadowColor: "#000",
       shadowOpacity: 0.3,
       shadowRadius: 4,
-      elevation:9,
-      width:70,  
-      height: 70, 
+      elevation: 9,
+      width: 70,
+      height: 70,
     }}
     onPress={onPress}
   >
@@ -49,21 +49,26 @@ const BottomTabNavigation = () => {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor:colors.pink,
-        tabBarInactiveTintColor:colors.black,
-        tabBarStyle: { height: 60, paddingBottom: 5, paddingTop: 5 },
+        tabBarActiveTintColor: colors.pink,
+        tabBarInactiveTintColor: colors.black,
+         tabBarStyle: ({ route, focused }: any) => ({
+          height: 60,
+          paddingBottom: 5,
+          paddingTop: 5,
+          backgroundColor: route.name === "ShoppingCart" && focused ? colors.pink : 'white', // Pink background when ShoppingCart is selected
+        }),
       })}
     >
       <Tab.Screen name="Home" component={HomePage} options={{ headerShown: false }} />
       <Tab.Screen name="Wishlist" component={LoginScreen} options={{ headerShown: false }} />
-    
+
       <Tab.Screen
         name="ShoppingCart"
         component={LoginScreen}
         options={{
           headerShown: false,
-          tabBarShowLabel: false ,
           tabBarButton: (props) => <CustomTabButton {...props} />,
+          tabBarLabel: () => null
         }}
       />
 

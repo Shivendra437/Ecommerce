@@ -9,22 +9,30 @@ import CustomButton from "../../component/CustomButton";
 import { useDispatch, useSelector} from "react-redux";
 import { loginUser } from "../../redux/slices/AuthSlice";
 import { storeData } from "../../utilities/Storageservice";
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import {LoginManager, AccessToken,Settings} from 'react-native-fbsdk-next';
 
 
 
 export default function LoginScreen({ navigation }: any) {
+    // Settings.initializeSDK();
     const dispatch=useDispatch();
     const result = useSelector((state:any) => state.auth.user);
-    const socialimg = [
-        { id: 'google', source: require('../../assets/images/Google.png') },
-        { id: 'apple', source: require('../../assets/images/apple.png') },
-        { id: 'facebook', source: require('../../assets/images/Facebook.png') },
-    ];
+    const [userInfo, setUserInfo] = useState(null);
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [secureText, setSecureText] = useState(true);
+    GoogleSignin.configure({
+        webClientId: '710082056399-ij24fu278c69q4u7rbcob55rf5nj3upr.apps.googleusercontent.com', // From Google Cloud Console
+        offlineAccess: true,
+      });
+    const socialimg = [
+        { id: 'google', source: require('../../assets/images/Google.png') },
+        { id: 'apple', source: require('../../assets/images/apple.png') },
+        { id: 'facebook', source: require('../../assets/images/Facebook.png') },
+    ];
 
     const validateEmail = (text: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -67,6 +75,50 @@ export default function LoginScreen({ navigation }: any) {
 
         }
     };
+    const signIn = async () => {
+        try {
+          await GoogleSignin.hasPlayServices();
+          const userInfo = await GoogleSignin.signIn();
+          setUserInfo(userInfo);
+        } catch (error:any) {
+          if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+            console.log('User cancelled the login flow');
+          } else if (error.code === statusCodes.IN_PROGRESS) {
+            console.log('Sign in is in progress already');
+          } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+            console.log('Play Services not available or outdated');
+          } else {
+            console.error(error);
+          }
+        }
+      };
+      
+      const handleFacebookLogin = async () => {
+        try {
+          const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+          console.log('result',result)
+          if (result.isCancelled) {
+            Alert.alert('Login cancelled');
+          } else {
+            const data = await AccessToken.getCurrentAccessToken();
+            if (data) {
+              Alert.alert('Access Token:', data.accessToken.toString());
+            }
+          }
+        } catch (error:any) {
+          Alert.alert('Login error', error.message);
+        }
+      };
+
+      const handlerSocial=(id:string)=>{
+if(id=='google'){
+    signIn()
+}
+else if(id=='facebook'){
+    console.log('hello')
+    handleFacebookLogin()
+}
+      }
 
     return (
         <View style={styles.container}>
@@ -112,7 +164,7 @@ export default function LoginScreen({ navigation }: any) {
                     horizontal
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => alert(`Pressed ${item.id}`)} style={styles.socialIconContainer}>
+                        <TouchableOpacity onPress={() => handlerSocial(item.id)} style={styles.socialIconContainer}>
                             <Image source={item.source} style={styles.socialIcon} />
                         </TouchableOpacity>
                     )}
